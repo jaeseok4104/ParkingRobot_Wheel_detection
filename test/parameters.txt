@@ -1,0 +1,17 @@
+#ROI x,y
+start_x=170
+start_y=0
+end_x=360
+end_y=480
+
+#threshhold
+threshold=200
+canny_threshold=320
+
+#houghCircle
+dp=1
+minDist=150
+accumulate_value=40
+minRadius=80
+maxRadius=200
+searchcircle=400
