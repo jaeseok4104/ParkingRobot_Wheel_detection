@@ -12,6 +12,7 @@ public:
     rs2::pipeline pipeline;
     rs2::pipeline_profile pipeline_profile;
     rs2::frameset frameset;
+    rs2::frameset align_set;
 
     // Color Buffer
     rs2::frame color_frame;
@@ -26,6 +27,13 @@ public:
     uint32_t depth_width = 640;
     uint32_t depth_height = 480;
     uint32_t depth_fps = 30;
+
+    //Align Buffer
+    rs2::frame align_frame;
+    cv::Mat align_mat;
+    uint32_t align_width = 640;
+    uint32_t align_height = 480;
+    uint32_t align_fps = 30;
 
     // Point Cloud Buffer
     rs2::pointcloud pointcloud;
@@ -71,6 +79,9 @@ public:
 
     // Update Depth
     inline void updateDepth();
+    
+    // Update Align
+    inline void updateAlign();
 
     // Update Point Cloud
     inline void updatePointCloud();
@@ -85,6 +96,8 @@ public:
 
     // Draw Depth
     inline void drawDepth();
+
+    inline void drawAlign();
 
     // Draw Point Cloud
     inline void drawPointCloud();

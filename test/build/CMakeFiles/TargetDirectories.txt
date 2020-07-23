@@ -5,5 +5,4 @@
 /home/park/Work/parkingrobo/test/build/src/CMakeFiles/PARKING.dir
 /home/park/Work/parkingrobo/test/build/test/CMakeFiles/rebuild_cache.dir
 /home/park/Work/parkingrobo/test/build/test/CMakeFiles/edit_cache.dir
-/home/park/Work/parkingrobo/test/build/test/CMakeFiles/test.dir
-/home/park/Work/parkingrobo/test/build/test/CMakeFiles/main.dir
+/home/park/Work/parkingrobo/test/build/test/CMakeFiles/depth.dir

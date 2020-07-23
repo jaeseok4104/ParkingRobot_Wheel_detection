@@ -1,7 +1,5 @@
 #include "slamBase.h"
 
-
-FRAME readFrame( RealSense& realsense, ParameterReader& pd );
 int main(void)
 {
     RealSense realsense;
@@ -22,18 +20,7 @@ int main(void)
         currFrame = readFrame(realsense);
         FRAME roiFrame, roiFrameGray;
         roiFrame.rgb = currFrame.rgb(cv::Rect(start_x,start_y,end_x,end_y));
-        roiFrame.depth = currFrame.depth(cv::Rect(start_x,start_y,end_x,end_y));
-        
-        unsigned char* depth_ptr = (unsigned char*)roiFrame.depth.data;
-        
         cv::cvtColor(roiFrame.rgb, roiFrameGray.rgb,cv::COLOR_BGR2GRAY);
-        unsigned char* img_ptr = (unsigned char*)roiFrameGray.rgb.data;
-        for(int i = 0; i<roiFrameGray.rgb.rows; i++){
-            for (int j = 0; j < roiFrameGray.rgb.cols; j++){
-                if(depth_ptr[i*roiFrameGray.rgb.cols+j] > 1)
-                    img_ptr[i*roiFrameGray.rgb.cols+j] = 0;
-            }
-        }
 
         int threshold = atoi(pd.getData("threshold").c_str());
         cv::Mat binaryimg;
@@ -42,8 +29,8 @@ int main(void)
         cv::Mat edgeimg;
         
         int canny_threshold = atoi(pd.getData("canny_threshold").c_str());
-        cv::blur(binaryimg, edgeimg, cv::Size(3,3));
-        // cv::blur(roiFrameGray.rgb, edgeimg, cv::Size(3,3));
+        // cv::blur(binaryimg, edgeimg, cv::Size(3,3));
+        cv::blur(roiFrameGray.rgb, edgeimg, cv::Size(3,3));
         cv::Canny(edgeimg, edgeimg, 25, canny_threshold, 3);
 
         int dp = atoi(pd.getData("dp").c_str());
@@ -61,6 +48,7 @@ int main(void)
 
         vector<cv::Vec3f> circles;
         cv::HoughCircles(edgeimg, circles, CV_HOUGH_GRADIENT, dp, minDist, searchcircle, accumulate_value, minRadius, maxRadius);
+        // cv::HoughCircles(edgeimg, circles, CV_HOUGH_GRADIENT, dp, minDist, edgeimg.rows / 4, accumulate_value, minRadius, maxRadius);
         
         cv::Mat circle_image = roiFrame.rgb.clone();
         if(circles.size()>0){
@@ -77,7 +65,6 @@ int main(void)
 
         cv::imshow("roi", roiFrame.rgb);
         cv::imshow("normal", currFrame.rgb);
-        cv::imshow("depth", roiFrame.depth);
         cv::imshow("roiGRAY", roiFrameGray.rgb);
         cv::imshow("binaryimg", binaryimg);
         cv::imshow("edgeimg", edgeimg);
@@ -96,4 +83,3 @@ int main(void)
 
     return 0;
 }
-

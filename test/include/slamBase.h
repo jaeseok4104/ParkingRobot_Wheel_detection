@@ -92,7 +92,7 @@ struct CAMERA_INTRINSIC_PARAMETERS
 };
 struct FRAME
 {
-    cv::Mat rgb, depth;
+    cv::Mat rgb, depth, align;
     cv::Mat desp;
     vector<cv::KeyPoint> kp;
 };

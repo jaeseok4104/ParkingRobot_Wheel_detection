@@ -111,8 +111,7 @@ src/clean: src/CMakeFiles/PARKING.dir/clean
 # Directory level rules for directory test
 
 # Recursive "all" directory target.
-test/all: test/CMakeFiles/test.dir/all
-test/all: test/CMakeFiles/main.dir/all
+test/all: test/CMakeFiles/depth.dir/all
 
 .PHONY : test/all
 
@@ -122,8 +121,7 @@ test/preinstall:
 .PHONY : test/preinstall
 
 # Recursive "clean" directory target.
-test/clean: test/CMakeFiles/test.dir/clean
-test/clean: test/CMakeFiles/main.dir/clean
+test/clean: test/CMakeFiles/depth.dir/clean
 
 .PHONY : test/clean
 
@@ -155,58 +153,31 @@ src/CMakeFiles/PARKING.dir/clean:
 .PHONY : src/CMakeFiles/PARKING.dir/clean
 
 #=============================================================================
-# Target rules for target test/CMakeFiles/test.dir
+# Target rules for target test/CMakeFiles/depth.dir
 
 # All Build rule for target.
-test/CMakeFiles/test.dir/all: src/CMakeFiles/PARKING.dir/all
-	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/test.dir/build.make test/CMakeFiles/test.dir/depend
-	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/test.dir/build.make test/CMakeFiles/test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/park/Work/parkingrobo/test/build/CMakeFiles --progress-num=6,7 "Built target test"
-.PHONY : test/CMakeFiles/test.dir/all
+test/CMakeFiles/depth.dir/all: src/CMakeFiles/PARKING.dir/all
+	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/depth.dir/build.make test/CMakeFiles/depth.dir/depend
+	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/depth.dir/build.make test/CMakeFiles/depth.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/park/Work/parkingrobo/test/build/CMakeFiles --progress-num=4,5 "Built target depth"
+.PHONY : test/CMakeFiles/depth.dir/all
 
 # Build rule for subdir invocation for target.
-test/CMakeFiles/test.dir/rule: cmake_check_build_system
+test/CMakeFiles/depth.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/park/Work/parkingrobo/test/build/CMakeFiles 5
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/test.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/depth.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/park/Work/parkingrobo/test/build/CMakeFiles 0
-.PHONY : test/CMakeFiles/test.dir/rule
+.PHONY : test/CMakeFiles/depth.dir/rule
 
 # Convenience name for target.
-test: test/CMakeFiles/test.dir/rule
+depth: test/CMakeFiles/depth.dir/rule
 
-.PHONY : test
-
-# clean rule for target.
-test/CMakeFiles/test.dir/clean:
-	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/test.dir/build.make test/CMakeFiles/test.dir/clean
-.PHONY : test/CMakeFiles/test.dir/clean
-
-#=============================================================================
-# Target rules for target test/CMakeFiles/main.dir
-
-# All Build rule for target.
-test/CMakeFiles/main.dir/all: src/CMakeFiles/PARKING.dir/all
-	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/main.dir/build.make test/CMakeFiles/main.dir/depend
-	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/main.dir/build.make test/CMakeFiles/main.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/park/Work/parkingrobo/test/build/CMakeFiles --progress-num=4,5 "Built target main"
-.PHONY : test/CMakeFiles/main.dir/all
-
-# Build rule for subdir invocation for target.
-test/CMakeFiles/main.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/park/Work/parkingrobo/test/build/CMakeFiles 5
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/main.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/park/Work/parkingrobo/test/build/CMakeFiles 0
-.PHONY : test/CMakeFiles/main.dir/rule
-
-# Convenience name for target.
-main: test/CMakeFiles/main.dir/rule
-
-.PHONY : main
+.PHONY : depth
 
 # clean rule for target.
-test/CMakeFiles/main.dir/clean:
-	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/main.dir/build.make test/CMakeFiles/main.dir/clean
-.PHONY : test/CMakeFiles/main.dir/clean
+test/CMakeFiles/depth.dir/clean:
+	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/depth.dir/build.make test/CMakeFiles/depth.dir/clean
+.PHONY : test/CMakeFiles/depth.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

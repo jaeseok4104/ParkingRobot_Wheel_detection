@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/park/Work/parkingrobo/test/test/main.cpp" "/home/park/Work/parkingrobo/test/build/test/CMakeFiles/main.dir/main.cpp.o"
+  "/home/park/Work/parkingrobo/test/test/depth_img.cpp" "/home/park/Work/parkingrobo/test/build/test/CMakeFiles/depth.dir/depth_img.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

@@ -158,15 +158,23 @@ FRAME readFrame( RealSense& realsense)
     FRAME f;
 
     realsense.updateFrame();
+
     realsense.updateColor();
     realsense.updateDepth();
+    realsense.updateAlign();
     realsense.drawColor();
     realsense.drawDepth();
+    realsense.drawAlign();
+    
 
     f.rgb = realsense.color_mat;
+    
     cv::Mat depth = realsense.depth_mat;
     depth.convertTo(f.depth, CV_8UC1, 255.0/65536.0);
 
+    // f.align = realsense.align_mat;
+    cv::Mat align = realsense.align_mat;
+    align.convertTo(f.align, CV_8UC1, 255.0/65536.0);
     return f;
 }
 

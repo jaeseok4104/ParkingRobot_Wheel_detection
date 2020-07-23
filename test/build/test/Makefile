@@ -130,88 +130,46 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-test/CMakeFiles/test.dir/rule:
-	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/test.dir/rule
-.PHONY : test/CMakeFiles/test.dir/rule
+test/CMakeFiles/depth.dir/rule:
+	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/depth.dir/rule
+.PHONY : test/CMakeFiles/depth.dir/rule
 
 # Convenience name for target.
-test: test/CMakeFiles/test.dir/rule
+depth: test/CMakeFiles/depth.dir/rule
 
-.PHONY : test
+.PHONY : depth
 
 # fast build rule for target.
-test/fast:
-	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test.dir/build.make test/CMakeFiles/test.dir/build
-.PHONY : test/fast
+depth/fast:
+	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/depth.dir/build.make test/CMakeFiles/depth.dir/build
+.PHONY : depth/fast
 
-# Convenience name for target.
-test/CMakeFiles/main.dir/rule:
-	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/main.dir/rule
-.PHONY : test/CMakeFiles/main.dir/rule
+depth_img.o: depth_img.cpp.o
 
-# Convenience name for target.
-main: test/CMakeFiles/main.dir/rule
-
-.PHONY : main
-
-# fast build rule for target.
-main/fast:
-	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/main.dir/build.make test/CMakeFiles/main.dir/build
-.PHONY : main/fast
-
-houghcircle.o: houghcircle.cpp.o
-
-.PHONY : houghcircle.o
+.PHONY : depth_img.o
 
 # target to build an object file
-houghcircle.cpp.o:
-	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test.dir/build.make test/CMakeFiles/test.dir/houghcircle.cpp.o
-.PHONY : houghcircle.cpp.o
+depth_img.cpp.o:
+	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/depth.dir/build.make test/CMakeFiles/depth.dir/depth_img.cpp.o
+.PHONY : depth_img.cpp.o
 
-houghcircle.i: houghcircle.cpp.i
+depth_img.i: depth_img.cpp.i
 
-.PHONY : houghcircle.i
-
-# target to preprocess a source file
-houghcircle.cpp.i:
-	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test.dir/build.make test/CMakeFiles/test.dir/houghcircle.cpp.i
-.PHONY : houghcircle.cpp.i
-
-houghcircle.s: houghcircle.cpp.s
-
-.PHONY : houghcircle.s
-
-# target to generate assembly for a file
-houghcircle.cpp.s:
-	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test.dir/build.make test/CMakeFiles/test.dir/houghcircle.cpp.s
-.PHONY : houghcircle.cpp.s
-
-main.o: main.cpp.o
-
-.PHONY : main.o
-
-# target to build an object file
-main.cpp.o:
-	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/main.dir/build.make test/CMakeFiles/main.dir/main.cpp.o
-.PHONY : main.cpp.o
-
-main.i: main.cpp.i
-
-.PHONY : main.i
+.PHONY : depth_img.i
 
 # target to preprocess a source file
-main.cpp.i:
-	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/main.dir/build.make test/CMakeFiles/main.dir/main.cpp.i
-.PHONY : main.cpp.i
+depth_img.cpp.i:
+	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/depth.dir/build.make test/CMakeFiles/depth.dir/depth_img.cpp.i
+.PHONY : depth_img.cpp.i
 
-main.s: main.cpp.s
+depth_img.s: depth_img.cpp.s
 
-.PHONY : main.s
+.PHONY : depth_img.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/main.dir/build.make test/CMakeFiles/main.dir/main.cpp.s
-.PHONY : main.cpp.s
+depth_img.cpp.s:
+	cd /home/park/Work/parkingrobo/test/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/depth.dir/build.make test/CMakeFiles/depth.dir/depth_img.cpp.s
+.PHONY : depth_img.cpp.s
 
 # Help Target
 help:
@@ -221,14 +179,10 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... main"
-	@echo "... test"
-	@echo "... houghcircle.o"
-	@echo "... houghcircle.i"
-	@echo "... houghcircle.s"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... depth"
+	@echo "... depth_img.o"
+	@echo "... depth_img.i"
+	@echo "... depth_img.s"
 .PHONY : help
 
 

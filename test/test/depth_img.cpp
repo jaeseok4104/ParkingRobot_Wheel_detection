@@ -8,7 +8,6 @@ int main(void)
     ParameterReader pd;
     cout<<"Realsense loading complete!!"<<endl;
     FRAME currFrame;
-
     int currIndex = 0;
 
     int start_x = atoi(pd.getData("start_x").c_str());
@@ -22,16 +21,16 @@ int main(void)
         currFrame = readFrame(realsense);
         FRAME roiFrame, roiFrameGray;
         roiFrame.rgb = currFrame.rgb(cv::Rect(start_x,start_y,end_x,end_y));
-        roiFrame.depth = currFrame.depth(cv::Rect(start_x,start_y,end_x,end_y));
-        
-        unsigned char* depth_ptr = (unsigned char*)roiFrame.depth.data;
+        // roiFrame.depth = currFrame.depth(cv::Rect(start_x,start_y,end_x,end_y));
+        roiFrame.depth = currFrame.align(cv::Rect(start_x,start_y,end_x,end_y));  
         
         cv::cvtColor(roiFrame.rgb, roiFrameGray.rgb,cv::COLOR_BGR2GRAY);
-        unsigned char* img_ptr = (unsigned char*)roiFrameGray.rgb.data;
         for(int i = 0; i<roiFrameGray.rgb.rows; i++){
+            uchar *img_ptr = roiFrameGray.rgb.ptr<uchar>(i);
+            uchar *depth_ptr = roiFrame.depth.ptr<uchar>(i);
             for (int j = 0; j < roiFrameGray.rgb.cols; j++){
-                if(depth_ptr[i*roiFrameGray.rgb.cols+j] > 1)
-                    img_ptr[i*roiFrameGray.rgb.cols+j] = 0;
+                if(depth_ptr[j] > 5 || depth_ptr[j] == 0)
+                    img_ptr[j] = 0;
             }
         }
 
@@ -44,7 +43,7 @@ int main(void)
         int canny_threshold = atoi(pd.getData("canny_threshold").c_str());
         cv::blur(binaryimg, edgeimg, cv::Size(3,3));
         // cv::blur(roiFrameGray.rgb, edgeimg, cv::Size(3,3));
-        cv::Canny(edgeimg, edgeimg, 25, canny_threshold, 3);
+        cv::Canny(edgeimg, edgeimg, 80, canny_threshold, 3);
 
         int dp = atoi(pd.getData("dp").c_str());
         double minDist = atoi(pd.getData("minDist").c_str());
@@ -52,16 +51,16 @@ int main(void)
         int maxRadius = atoi(pd.getData("maxRadius").c_str());
         double accumulate_value = atoi(pd.getData("accumulate_value").c_str());
         int searchcircle = atoi(pd.getData("searchcircle").c_str());
-        cout<<"dp = "<< dp <<endl;
-        cout<<"minDist = "<< minDist <<endl;
-        cout<<"minRadius = "<< minRadius <<endl;
-        cout<<"maxRadius = "<< maxRadius <<endl;
-        cout<<"accumulate_vale = "<< accumulate_value <<endl;
+        // cout<<"dp = "<< dp <<endl;
+        // cout<<"minDist = "<< minDist <<endl;
+        // cout<<"minRadius = "<< minRadius <<endl;
+        // cout<<"maxRadius = "<< maxRadius <<endl;
+        // cout<<"accumulate_vale = "<< accumulate_value <<endl;e
 
 
         vector<cv::Vec3f> circles;
         cv::HoughCircles(edgeimg, circles, CV_HOUGH_GRADIENT, dp, minDist, searchcircle, accumulate_value, minRadius, maxRadius);
-        
+        cout<<"cicles.size = "<< circles.size()<< endl;
         cv::Mat circle_image = roiFrame.rgb.clone();
         if(circles.size()>0){
             for(size_t i = 0;i<circles.size(); i++)
@@ -74,15 +73,15 @@ int main(void)
             }
         }
 
-
         cv::imshow("roi", roiFrame.rgb);
+        cv::imshow("roidepth", roiFrame.depth);
         cv::imshow("normal", currFrame.rgb);
-        cv::imshow("depth", roiFrame.depth);
+        cv::imshow("depth", currFrame.depth);
         cv::imshow("roiGRAY", roiFrameGray.rgb);
         cv::imshow("binaryimg", binaryimg);
         cv::imshow("edgeimg", edgeimg);
         cv::imshow("circle", circle_image);
-
+        cv::imshow("align", currFrame.align);
 
 
         int check = cv::waitKey(1);

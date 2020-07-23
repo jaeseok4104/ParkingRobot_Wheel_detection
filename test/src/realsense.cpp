@@ -130,6 +130,7 @@ void RealSense::update()
     // Update Depth
     updateDepth();
 
+    updateAlign();
     // Update Point Cloud
     updatePointCloud();
 }
@@ -163,6 +164,18 @@ inline void RealSense::updateDepth()
     depth_height = depth_frame.as<rs2::video_frame>().get_height();
 }
 
+inline void RealSense::updateAlign()
+{
+    // Retrieve Depth Frame
+    rs2::align align(RS2_STREAM_COLOR);
+    align_set = align.process(frameset);
+    // align_frame = align_set.get_depth_frame();
+
+    // // Retrive Frame Size
+    // align_width = align_frame.as<rs2::video_frame>().get_width();
+    // align_height = align_frame.as<rs2::video_frame>().get_height();
+}
+
 // Update Point Cloud
 inline void RealSense::updatePointCloud()
 {
@@ -182,6 +195,8 @@ void RealSense::draw()
     // Draw Depth
     drawDepth();
 
+    drawAlign();
+
     // Draw Point Cloud
     drawPointCloud();
 }
@@ -190,14 +205,30 @@ void RealSense::draw()
 inline void RealSense::drawColor()
 {
     // Create cv::Mat form Color Frame
-    color_mat = cv::Mat( color_height, color_width, CV_8UC3, const_cast<void*>( color_frame.get_data() ) );
+    // color_mat = cv::Mat( color_height, color_width, CV_8UC3, const_cast<void*>( color_frame.get_data() ) );
+    align_frame = align_set.get_color_frame();
+
+    // // Retrive Frame Size
+    align_width = align_frame.as<rs2::video_frame>().get_width();
+    align_height = align_frame.as<rs2::video_frame>().get_height();
+    color_mat = cv::Mat( align_height, align_width, CV_8UC3, const_cast<void*>( align_frame.get_data() ) );
 }
 
 // Draw Depth
 inline void RealSense::drawDepth()
 {
     // Create cv::Mat form Depth Frame
-    depth_mat = cv::Mat( depth_height, depth_width, CV_8UC1, const_cast<void*>( depth_frame.get_data() ) );
+    depth_mat = cv::Mat( depth_height, depth_width, CV_16UC1, const_cast<void*>( depth_frame.get_data() ) );
+}
+
+//Draw Align
+inline void RealSense::drawAlign()
+{
+    // Create cv::Mat form Align Frame
+    align_frame = align_set.get_depth_frame();
+    align_width = align_frame.as<rs2::video_frame>().get_width();
+    align_height = align_frame.as<rs2::video_frame>().get_height();
+    align_mat = cv::Mat( align_height, align_width, CV_16UC1, const_cast<void*>( align_frame.get_data() ) );
 }
 
 // Draw Point Cloud

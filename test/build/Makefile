@@ -143,30 +143,17 @@ PARKING/fast:
 .PHONY : PARKING/fast
 
 #=============================================================================
-# Target rules for targets named test
+# Target rules for targets named depth
 
 # Build rule for target.
-test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test
-.PHONY : test
+depth: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 depth
+.PHONY : depth
 
 # fast build rule for target.
-test/fast:
-	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/test.dir/build.make test/CMakeFiles/test.dir/build
-.PHONY : test/fast
-
-#=============================================================================
-# Target rules for targets named main
-
-# Build rule for target.
-main: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 main
-.PHONY : main
-
-# fast build rule for target.
-main/fast:
-	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/main.dir/build.make test/CMakeFiles/main.dir/build
-.PHONY : main/fast
+depth/fast:
+	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/depth.dir/build.make test/CMakeFiles/depth.dir/build
+.PHONY : depth/fast
 
 # Help Target
 help:
@@ -177,8 +164,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... PARKING"
-	@echo "... main"
-	@echo "... test"
+	@echo "... depth"
 .PHONY : help
 
 

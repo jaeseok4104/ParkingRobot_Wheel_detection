@@ -54,7 +54,7 @@ Eigen/Core
 Eigen/Geometry
 -
 
-/home/park/Work/parkingrobo/test/test/houghcircle.cpp
+/home/park/Work/parkingrobo/test/test/depth_img.cpp
 slamBase.h
 /home/park/Work/parkingrobo/test/test/slamBase.h
 
