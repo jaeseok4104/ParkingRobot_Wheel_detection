@@ -6,12 +6,15 @@ end_y=480
 
 #threshhold
 threshold=200
-canny_threshold=320
+canny_threshold=300
 
 #houghCircle
 dp=1
 minDist=100
-accumulate_value=40
-minRadius=90
+accumulate_value=32
+minRadius=120
 maxRadius=200
 searchcircle=400
+
+low_pass_weight=5
+detect_threshold=5
