@@ -6,7 +6,8 @@ end_y=480
 
 #threshhold
 threshold=200
-canny_threshold=300
+canny_threshold1=120
+canny_threshold2=200
 
 #houghCircle
 dp=1
@@ -18,3 +19,11 @@ searchcircle=400
 
 low_pass_weight=5
 detect_threshold=5
+
+lowH=0
+lowS=0
+lowV=0
+
+highH=0
+highS=120
+highV=120
