@@ -121,7 +121,7 @@ PARKING_EXTERNAL_OBJECTS =
 ../lib/libPARKING.so: /usr/local/lib/libopencv_superres.so.3.4.0
 ../lib/libPARKING.so: /usr/local/lib/libopencv_videostab.so.3.4.0
 ../lib/libPARKING.so: /usr/local/lib/libopencv_viz.so.3.4.0
-../lib/libPARKING.so: /opt/ros/melodic/lib/librealsense2.so.2.35.2
+../lib/libPARKING.so: /opt/ros/melodic/lib/librealsense2.so.2.36.0
 ../lib/libPARKING.so: /usr/local/lib/libpcl_visualization.so
 ../lib/libPARKING.so: /usr/local/lib/libpcl_filters.so
 ../lib/libPARKING.so: //usr/lib/x86_64-linux-gnu/libboost_system.so

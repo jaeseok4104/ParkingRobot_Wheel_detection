@@ -117,7 +117,7 @@ depth_EXTERNAL_OBJECTS =
 ../bin/depth: /usr/local/lib/libopencv_imgproc.so.3.4.0
 ../bin/depth: /usr/local/lib/libopencv_viz.so.3.4.0
 ../bin/depth: /usr/local/lib/libopencv_core.so.3.4.0
-../bin/depth: /opt/ros/melodic/lib/librealsense2.so.2.35.2
+../bin/depth: /opt/ros/melodic/lib/librealsense2.so.2.36.0
 ../bin/depth: /usr/local/lib/libpcl_visualization.so
 ../bin/depth: /usr/local/lib/libpcl_io.so
 ../bin/depth: /usr/local/lib/libpcl_filters.so

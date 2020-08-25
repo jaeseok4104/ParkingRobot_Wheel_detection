@@ -20,10 +20,10 @@ searchcircle=400
 low_pass_weight=5
 detect_threshold=5
 
-lowH=0
+lowH=30
 lowS=0
 lowV=0
 
-highH=0
-highS=120
-highV=120
+highH=150
+highS=300
+highV=150

@@ -1,6 +1,7 @@
 #include "slamBase.h"
 
-FRAME readFrame( RealSense& realsense, ParameterReader& pd );
+void depth_delete(cv::Mat &edgeimg, cv::Mat &depth);
+
 int main(void)
 {
     RealSense realsense;
@@ -13,9 +14,32 @@ int main(void)
     int start_y = atoi(pd.getData("start_y").c_str());
     int end_x = atoi(pd.getData("end_x").c_str());
     int end_y = atoi(pd.getData("end_y").c_str());
+
+    int threshold = atoi(pd.getData("threshold").c_str()); // 이진화 threshold value
+
+    int canny_threshold1 = atoi(pd.getData("canny_threshold1").c_str());
+    int canny_threshold2 = atoi(pd.getData("canny_threshold2").c_str());
+    
+    int dp = atoi(pd.getData("dp").c_str());
+    double minDist = atoi(pd.getData("minDist").c_str());
+    int minRadius = atoi(pd.getData("minRadius").c_str());
+    int maxRadius = atoi(pd.getData("maxRadius").c_str());
+    double accumulate_value = atoi(pd.getData("accumulate_value").c_str());
+    int searchcircle = atoi(pd.getData("searchcircle").c_str());
+    double w = atoi(pd.getData("low_pass_weight").c_str());
+    int detect_threshold = atoi(pd.getData("detect_threshold").c_str());
+
+    int lowH = atoi(pd.getData("lowH").c_str());
+    int lowS = atoi(pd.getData("lowS").c_str());
+    int lowV = atoi(pd.getData("lowV").c_str());
+    int highH = atoi(pd.getData("highH").c_str());
+    int highS = atoi(pd.getData("highS").c_str());
+    int highV = atoi(pd.getData("highV").c_str());
+
     char detect_circle_cnt = 0;
     vector<cv::Vec3f> pre_circles;
 
+    cv::Mat elements(7,7,CV_8U, cv::Scalar(1));
     while(true)
     {
         cout<<"Reading files "<<currIndex<<endl;
@@ -24,52 +48,37 @@ int main(void)
         cv::Mat binaryimg; // 이진화 이미지
         cv::Mat binaryimg_close;
         cv::Mat edgeimg; // 엣지 이미지
-        cv::Mat hsvimg;
-        cv::Mat hsvimg_binary;
-        cv::Mat hsvimg_binaryblur;
+        cv::Mat edgeimg_close; // 엣지 이미지
+        cv::Mat hsvimg;   // hsv 이미지
+        cv::Mat hsvimg_binary; // hsv 이진이미지
+        cv::Mat hsvimg_binaryMopol; // hsv 이진 close 이미지
+        cv::Mat hsvimg_binaryblur; // hsv_이진 블러 이미지
+        cv::Mat hsvedge; // hsv 엣지
+        cv::Mat addEdge;
+        cv::Mat addEdgeErode;
         
         roiFrame.rgb = currFrame.rgb(cv::Rect(start_x,start_y,end_x,end_y));      // roi 이미지 업데이트 -> currframe에서 추출
         roiFrame.depth = currFrame.align(cv::Rect(start_x,start_y,end_x,end_y));  // roidepth 이미지 업데이트 -> currframe에서 추출
         cv::cvtColor(roiFrame.rgb, roiFrameGray.rgb,cv::COLOR_BGR2GRAY);          // roi grayscale img 업데이트 -> roiframe에서 추출
         cv::cvtColor(roiFrame.rgb, hsvimg, cv::COLOR_BGR2HSV);                    // roi hsv img 업데이트 -> roiframe에서 추출
-
-        int lowH = atoi(pd.getData("lowH").c_str());
-        int lowS = atoi(pd.getData("lowS").c_str());
-        int lowV = atoi(pd.getData("lowV").c_str());
-        int highH = atoi(pd.getData("highH").c_str());
-        int highS = atoi(pd.getData("highS").c_str());
-        int highV = atoi(pd.getData("highV").c_str());
+        
         cv::inRange(hsvimg, cv::Scalar(lowH,lowS,lowV),cv::Scalar(highH,highS,highV), hsvimg_binary);
-        cv::blur(hsvimg_binary, hsvimg_binaryblur, cv::Size(3,3));
+        cv::dilate(hsvimg_binary, hsvimg_binaryMopol, cv::Mat());
+        cv::erode(hsvimg_binaryMopol, hsvimg_binaryMopol, cv::Mat());
+        cv::blur(hsvimg_binaryMopol, hsvimg_binaryblur, cv::Size(3,3));
 
-
-        int threshold = atoi(pd.getData("threshold").c_str());    // 이진화 threshold value
         cv::threshold(roiFrameGray.rgb, binaryimg, threshold, 255, cv::THRESH_BINARY_INV| cv::THRESH_OTSU); // 이진화
+
         cv::dilate(binaryimg, binaryimg_close, cv::Mat());
         cv::erode(binaryimg_close, binaryimg_close, cv::Mat());
 
-        int canny_threshold1 = atoi(pd.getData("canny_threshold1").c_str());
-        int canny_threshold2 = atoi(pd.getData("canny_threshold2").c_str());
-        cv::blur(binaryimg_close, edgeimg, cv::Size(3,3));
+        cv::blur(binaryimg, edgeimg, cv::Size(3,3));
+        cv::blur(binaryimg_close, edgeimg_close, cv::Size(3,3));
         cv::Canny(edgeimg, edgeimg, canny_threshold1, canny_threshold2, 5);
+        cv::Canny(edgeimg_close, edgeimg_close, canny_threshold1, canny_threshold2, 5);
 
-        for(int i = 0; i<edgeimg.rows; i++){
-            uchar *img_ptr = edgeimg.ptr<uchar>(i);
-            uchar *depth_ptr = roiFrame.depth.ptr<uchar>(i);
-            for (int j = 0; j < edgeimg.cols; j++){
-                if (((depth_ptr[j + 5] > 3) && (depth_ptr[j - 5] > 3) && ((depth_ptr - 5)[j] > 3) && ((depth_ptr + 5)[j] > 3)))
-                    img_ptr[j] = 0;
-            }
-        }
-
-        int dp = atoi(pd.getData("dp").c_str());
-        double minDist = atoi(pd.getData("minDist").c_str());
-        int minRadius = atoi(pd.getData("minRadius").c_str());
-        int maxRadius = atoi(pd.getData("maxRadius").c_str());
-        double accumulate_value = atoi(pd.getData("accumulate_value").c_str());
-        int searchcircle = atoi(pd.getData("searchcircle").c_str());
-        double w = atoi(pd.getData("low_pass_weight").c_str());
-        int detect_threshold = atoi(pd.getData("detect_threshold").c_str());
+        depth_delete(edgeimg, roiFrame.depth);
+        depth_delete(hsvedge, roiFrame.depth);
 
         vector<cv::Vec3f> circles;
 
@@ -97,22 +106,32 @@ int main(void)
                 pre_circles = circles;
             }
         }else detect_circle_cnt = 0;
+        
+        cv::imshow("hsv_Mopol_pre", hsvimg_binaryMopol);
+        for (int i = 0; i < hsvimg_binaryMopol.rows; i++)
+        {
+            uchar *img_ptr = hsvimg_binaryMopol.ptr<uchar>(i);
+            uchar *def_ptr = binaryimg_close.ptr<uchar>(i);
+            for (int j = 0; j < hsvimg_binaryMopol.cols; j++)
+            {
+                if(def_ptr[j] != img_ptr[j])
+                    img_ptr[j] = 0;
+            }
+        }
 
+        depth_delete(hsvimg_binaryMopol, roiFrame.depth);
+        cv::blur(hsvimg_binaryMopol, hsvimg_binaryblur, cv::Size(3,3));
+        cv::Canny(hsvimg_binaryblur, hsvedge, canny_threshold1, canny_threshold2, 5); // hsv 모폴로지 이진 이미지를 캐니 에지로 연산
 
         // data check
-        cv::imshow("roi", roiFrame.rgb);
-        cv::imshow("roidepth", roiFrame.depth);
-        cv::imshow("normal", currFrame.rgb);
-        cv::imshow("roiGRAY", roiFrameGray.rgb);
-        cv::imshow("edgeimg", edgeimg);
-        cv::imshow("binaryimg", binaryimg);
         cv::imshow("binaryimg_close", binaryimg_close);
-        cv::imshow("circle", circle_image);
+        // cv::imshow("circle", circle_image);
         cv::imshow("hsv", hsvimg);
-        cv::imshow("hsv_binary", hsvimg_binary);
+        // cv::imshow("hsv_binary", hsvimg_binary);
+        cv::imshow("hsv_Mopol", hsvimg_binaryMopol);
         cv::imshow("hsv_binaryblur", hsvimg_binaryblur);
-
-
+        cv::imshow("hsvedge", hsvedge);
+        // cv::imshow("edgeimg", edgeimg);
 
         int check = cv::waitKey(1);
         // cv::imshow("binaryimg", binaryimg);
@@ -125,5 +144,20 @@ int main(void)
     }
 
     return 0;
+}
+
+void depth_delete(cv::Mat &edgeimg, cv::Mat &depth)
+{
+    for (int i = 0; i < edgeimg.rows; i++)
+    {
+        uchar *img_ptr = edgeimg.ptr<uchar>(i);
+        uchar *depth_ptr = depth.ptr<uchar>(i);
+        for (int j = 0; j < edgeimg.cols; j++)
+        {
+            // if (((depth_ptr[j + 5] > 3) && (depth_ptr[j - 5] > 3) && ((depth_ptr - 5)[j] > 3) && ((depth_ptr + 5)[j] > 3)))
+            if ((depth_ptr[j] > 3)|| depth_ptr[j] ==0)
+                img_ptr[j] = 0;
+        }
+    }
 }
 
