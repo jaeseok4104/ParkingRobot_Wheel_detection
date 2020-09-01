@@ -18,7 +18,7 @@ maxRadius=200
 searchcircle=400
 
 low_pass_weight=5
-detect_threshold=5
+detect_threshold=10
 
 lowH=30
 lowS=0

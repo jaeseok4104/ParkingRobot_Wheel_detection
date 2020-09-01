@@ -65,20 +65,55 @@ int main(void)
         cv::inRange(hsvimg, cv::Scalar(lowH,lowS,lowV),cv::Scalar(highH,highS,highV), hsvimg_binary);
         cv::dilate(hsvimg_binary, hsvimg_binaryMopol, cv::Mat());
         cv::erode(hsvimg_binaryMopol, hsvimg_binaryMopol, cv::Mat());
-        cv::blur(hsvimg_binaryMopol, hsvimg_binaryblur, cv::Size(3,3));
 
         cv::threshold(roiFrameGray.rgb, binaryimg, threshold, 255, cv::THRESH_BINARY_INV| cv::THRESH_OTSU); // 이진화
-
         cv::dilate(binaryimg, binaryimg_close, cv::Mat());
         cv::erode(binaryimg_close, binaryimg_close, cv::Mat());
 
-        cv::blur(binaryimg, edgeimg, cv::Size(3,3));
-        cv::blur(binaryimg_close, edgeimg_close, cv::Size(3,3));
-        cv::Canny(edgeimg, edgeimg, canny_threshold1, canny_threshold2, 5);
-        cv::Canny(edgeimg_close, edgeimg_close, canny_threshold1, canny_threshold2, 5);
+        // cv::blur(binaryimg, edgeimg, cv::Size(3,3)); // 일반 이미지
+        cv::blur(binaryimg_close, edgeimg_close, cv::Size(3,3));  // 일반이미지 닫힘연산
+        // cv::Canny(edgeimg, edgeimg, canny_threshold1, canny_threshold2, 5); // 일반이미지 캐니엣지
+        cv::Canny(edgeimg_close, edgeimg_close, canny_threshold1, canny_threshold2, 5);  //  일반 이미지 닫힘연산 캐니엣지
+        depth_delete(edgeimg_close, roiFrame.depth);
+        cv::imshow("edgeimg_close", edgeimg_close);  // RGB edge
 
-        depth_delete(edgeimg, roiFrame.depth);
-        depth_delete(hsvedge, roiFrame.depth);
+
+
+
+        cv::imshow("hsv_Mopol_pre", hsvimg_binaryMopol); // HSV
+        for (int i = 0; i < hsvimg_binaryMopol.rows; i++)
+        {
+            uchar *img_ptr = hsvimg_binaryMopol.ptr<uchar>(i);
+            uchar *def_ptr = binaryimg_close.ptr<uchar>(i); // RGB
+            for (int j = 0; j < hsvimg_binaryMopol.cols; j++)
+            {
+                if(def_ptr[j] != img_ptr[j])
+                    img_ptr[j] = 0;
+            }
+        }
+
+        depth_delete(hsvimg_binaryMopol, roiFrame.depth);
+        cv::blur(hsvimg_binaryMopol, hsvimg_binaryblur, cv::Size(3,3));
+        cv::Canny(hsvimg_binaryblur, edgeimg, canny_threshold1, canny_threshold2, 5); // hsv 모폴로지 이진 이미지를 캐니 에지로 연산
+
+
+        vector<vector<cv::Point>> contours;
+        vector<cv::Vec4i> hierarchy;
+
+        cv::Mat contoursRGB = roiFrame.rgb.clone();
+        // cv::RNG rng(12345); // random number generator
+        cv::findContours(edgeimg, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0,0));
+        // cv::Mat drawing = cv::Mat::zeros(roiFrame.rgb.size(), CV_8UC3);
+        for(int i = 0; i<contours.size(); i++){
+            cv::Scalar color = cv::Scalar(0,0,255);
+            cv::drawContours(contoursRGB, contours, i, color, 1, 16, hierarchy, 0, cv::Point());
+        }
+        cv::imshow("roiFrame", roiFrame.rgb);
+        cv::imshow("contours_drawing", contoursRGB);
+
+
+
+
 
         vector<cv::Vec3f> circles;
 
@@ -106,35 +141,35 @@ int main(void)
                 pre_circles = circles;
             }
         }else detect_circle_cnt = 0;
-        
-        cv::imshow("hsv_Mopol_pre", hsvimg_binaryMopol);
-        for (int i = 0; i < hsvimg_binaryMopol.rows; i++)
-        {
-            uchar *img_ptr = hsvimg_binaryMopol.ptr<uchar>(i);
-            uchar *def_ptr = binaryimg_close.ptr<uchar>(i);
-            for (int j = 0; j < hsvimg_binaryMopol.cols; j++)
-            {
-                if(def_ptr[j] != img_ptr[j])
-                    img_ptr[j] = 0;
-            }
-        }
 
-        depth_delete(hsvimg_binaryMopol, roiFrame.depth);
-        cv::blur(hsvimg_binaryMopol, hsvimg_binaryblur, cv::Size(3,3));
-        cv::Canny(hsvimg_binaryblur, hsvedge, canny_threshold1, canny_threshold2, 5); // hsv 모폴로지 이진 이미지를 캐니 에지로 연산
+
+        // cv::imshow("hsv_Mopol_pre", hsvimg_binaryMopol);
+        // for (int i = 0; i < hsvimg_binaryMopol.rows; i++)
+        // {
+        //     uchar *img_ptr = hsvimg_binaryMopol.ptr<uchar>(i);
+        //     uchar *def_ptr = binaryimg_close.ptr<uchar>(i);
+        //     for (int j = 0; j < hsvimg_binaryMopol.cols; j++)
+        //     {
+        //         if(def_ptr[j] != img_ptr[j])
+        //             img_ptr[j] = 0;
+        //     }
+        // }
+
+        // depth_delete(hsvimg_binaryMopol, roiFrame.depth);
+        // cv::blur(hsvimg_binaryMopol, hsvimg_binaryblur, cv::Size(3,3));
+        // cv::Canny(hsvimg_binaryblur, hsvedge, canny_threshold1, canny_threshold2, 5); // hsv 모폴로지 이진 이미지를 캐니 에지로 연산
 
         // data check
-        cv::imshow("binaryimg_close", binaryimg_close);
-        // cv::imshow("circle", circle_image);
-        cv::imshow("hsv", hsvimg);
+        cv::imshow("binaryimg_close", binaryimg_close); // RGB
+        cv::imshow("hsv", hsvimg); // HSV
         // cv::imshow("hsv_binary", hsvimg_binary);
-        cv::imshow("hsv_Mopol", hsvimg_binaryMopol);
-        cv::imshow("hsv_binaryblur", hsvimg_binaryblur);
-        cv::imshow("hsvedge", hsvedge);
-        // cv::imshow("edgeimg", edgeimg);
+        cv::imshow("hsv_Mopol", hsvimg_binaryMopol); // AND 연산
+        cv::imshow("hsv_binaryblur", hsvimg_binaryblur); // 위에 블러
+        // cv::imshow("hsvedge", hsvedge);
+        cv::imshow("edgeimg", edgeimg); // 엣지
+        cv::imshow("circle", circle_image); //원
 
         int check = cv::waitKey(1);
-        // cv::imshow("binaryimg", binaryimg);
         if (check == 's')
         {
         }
@@ -155,7 +190,7 @@ void depth_delete(cv::Mat &edgeimg, cv::Mat &depth)
         for (int j = 0; j < edgeimg.cols; j++)
         {
             // if (((depth_ptr[j + 5] > 3) && (depth_ptr[j - 5] > 3) && ((depth_ptr - 5)[j] > 3) && ((depth_ptr + 5)[j] > 3)))
-            if ((depth_ptr[j] > 3)|| depth_ptr[j] ==0)
+            if ((depth_ptr[j] > 2)|| depth_ptr[j] ==0)
                 img_ptr[j] = 0;
         }
     }
