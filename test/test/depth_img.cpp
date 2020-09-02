@@ -38,6 +38,8 @@ int main(void)
     int highS = atoi(pd.getData("highS").c_str());
     int highV = atoi(pd.getData("highV").c_str());
 
+    int contour_size = atoi(pd.getData("contour_size").c_str());
+
     char detect_circle_cnt = 0;
     vector<cv::Vec3f> pre_circles;
 
@@ -100,28 +102,29 @@ int main(void)
 
 
         vector<vector<cv::Point>> contours;
+        vector<vector<cv::Point>> contours_correct;
         vector<cv::Vec4i> hierarchy;
 
         cv::Mat contoursRGB = roiFrame.rgb.clone();
         // cv::RNG rng(12345); // random number generator
         cv::findContours(edgeimg, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
         // cv::Mat drawing = cv::Mat::zeros(roiFrame.rgb.size(), CV_8UC3);
-        int pre_idx[2] = {0,0};
 
-        for(int i = 0; i<contours.size(); i++){
-            if(contours[i].size() > pre_idx[0]){
-                pre_idx[1] = pre_idx[0];
-                pre_idx[0] = i;
-            }
-            else if(contours[i].size() > pre_idx[1])
-                pre_idx[1] = i;
-        }
+        cv::Mat drawing = cv::Mat::zeros(roiFrame.rgb.size(), CV_8UC3);
+
         cv::Scalar color = cv::Scalar(0, 0, 255);
+        for(int i = 0; i<contours.size(); i++){
+            if(contours[i].size() >= contour_size)
+                contours_correct.push_back(contours[i]);
+                // cv::drawContours(drawing, contours, i, color, 1, 16, hierarchy, 0, cv::Point());
+        }
+        for(int i = 0; i<contours_correct.size(); i++){
+                cv::drawContours(drawing, contours_correct, i, color, 1, 16, hierarchy, 0, cv::Point());
+        }
+        
         // cout<<"contour size : "<< contours[pre_idx].size()<<endl;
-        cv::drawContours(contoursRGB, contours, pre_idx[0], color, 1, 16, hierarchy, 0, cv::Point());
-        cv::drawContours(contoursRGB, contours, pre_idx[1], color, 1, 16, hierarchy, 0, cv::Point());
         cv::imshow("roiFrame", roiFrame.rgb);
-        cv::imshow("contours_drawing", contoursRGB);
+        cv::imshow("contours_drawing", drawing);
         
         // cv::RotatedRect tmp = cv::fitEllipse(contours);
         // vector<cv::RotatedRect> ellipse;
