@@ -1,5 +1,7 @@
 #include "slamBase.h"
 
+
+#include <algorithm>
 void depth_delete(cv::Mat &edgeimg, cv::Mat &depth);
 
 int main(void)
@@ -94,7 +96,7 @@ int main(void)
 
         depth_delete(hsvimg_binaryMopol, roiFrame.depth);
         cv::blur(hsvimg_binaryMopol, hsvimg_binaryblur, cv::Size(3,3));
-        cv::Canny(hsvimg_binaryblur, edgeimg, canny_threshold1, canny_threshold2, 5); // hsv 모폴로지 이진 이미지를 캐니 에지로 연산
+        cv::Canny(hsvimg_binaryblur, edgeimg, canny_threshold1, canny_threshold2, 5); // hsv 모폴로지 이진 이미지를 캐니 에지로 연산\
 
 
         vector<vector<cv::Point>> contours;
@@ -102,16 +104,34 @@ int main(void)
 
         cv::Mat contoursRGB = roiFrame.rgb.clone();
         // cv::RNG rng(12345); // random number generator
-        cv::findContours(edgeimg, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0,0));
+        cv::findContours(edgeimg, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
         // cv::Mat drawing = cv::Mat::zeros(roiFrame.rgb.size(), CV_8UC3);
+        int pre_idx[2] = {0,0};
+
         for(int i = 0; i<contours.size(); i++){
-            cv::Scalar color = cv::Scalar(0,0,255);
-            cv::drawContours(contoursRGB, contours, i, color, 1, 16, hierarchy, 0, cv::Point());
+            if(contours[i].size() > pre_idx[0]){
+                pre_idx[1] = pre_idx[0];
+                pre_idx[0] = i;
+            }
+            else if(contours[i].size() > pre_idx[1])
+                pre_idx[1] = i;
         }
+        cv::Scalar color = cv::Scalar(0, 0, 255);
+        // cout<<"contour size : "<< contours[pre_idx].size()<<endl;
+        cv::drawContours(contoursRGB, contours, pre_idx[0], color, 1, 16, hierarchy, 0, cv::Point());
+        cv::drawContours(contoursRGB, contours, pre_idx[1], color, 1, 16, hierarchy, 0, cv::Point());
         cv::imshow("roiFrame", roiFrame.rgb);
         cv::imshow("contours_drawing", contoursRGB);
-
-
+        
+        // cv::RotatedRect tmp = cv::fitEllipse(contours);
+        // vector<cv::RotatedRect> ellipse;
+        // ellipse.clear();
+        // for(int i; i<contours.size(); i++){
+        //     if(contours[i].size() >= 5){
+        //         cv::RotatedRect tmp = cv::fitEllipse(cv::Mat(contours[i]));
+        //         if()
+        //     }
+        // }
 
 
 

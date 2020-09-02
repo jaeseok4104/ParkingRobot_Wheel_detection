@@ -57,6 +57,8 @@ Eigen/Geometry
 /home/park/Work/parkingrobo/test/test/depth_img.cpp
 slamBase.h
 /home/park/Work/parkingrobo/test/test/slamBase.h
+algorithm
+-
 
 /opt/ros/melodic/include/librealsense2/h/rs_config.h
 rs_types.h
