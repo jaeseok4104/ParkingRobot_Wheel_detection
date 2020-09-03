@@ -26,6 +26,6 @@ lowV=0
 
 highH=150
 highS=300
-highV=150
+highV=200
 
-contour_size=200
+contour_size=650

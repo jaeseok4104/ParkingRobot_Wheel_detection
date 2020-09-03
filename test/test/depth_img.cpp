@@ -67,21 +67,17 @@ int main(void)
         cv::cvtColor(roiFrame.rgb, hsvimg, cv::COLOR_BGR2HSV);                    // roi hsv img 업데이트 -> roiframe에서 추출
         
         cv::inRange(hsvimg, cv::Scalar(lowH,lowS,lowV),cv::Scalar(highH,highS,highV), hsvimg_binary);
-        cv::dilate(hsvimg_binary, hsvimg_binaryMopol, cv::Mat());
-        cv::erode(hsvimg_binaryMopol, hsvimg_binaryMopol, cv::Mat());
+        cv::dilate(hsvimg_binary, hsvimg_binaryMopol, elements);
+        cv::erode(hsvimg_binaryMopol, hsvimg_binaryMopol, elements);
 
         cv::threshold(roiFrameGray.rgb, binaryimg, threshold, 255, cv::THRESH_BINARY_INV| cv::THRESH_OTSU); // 이진화
-        cv::dilate(binaryimg, binaryimg_close, cv::Mat());
-        cv::erode(binaryimg_close, binaryimg_close, cv::Mat());
+        cv::dilate(binaryimg, binaryimg_close, elements);
+        cv::erode(binaryimg_close, binaryimg_close, elements);
 
-        // cv::blur(binaryimg, edgeimg, cv::Size(3,3)); // 일반 이미지
-        cv::blur(binaryimg_close, edgeimg_close, cv::Size(3,3));  // 일반이미지 닫힘연산
-        // cv::Canny(edgeimg, edgeimg, canny_threshold1, canny_threshold2, 5); // 일반이미지 캐니엣지
+        cv::blur(binaryimg_close, edgeimg_close, cv::Size(3,3));  //닫힘연산한 일반이미지 블러링
         cv::Canny(edgeimg_close, edgeimg_close, canny_threshold1, canny_threshold2, 5);  //  일반 이미지 닫힘연산 캐니엣지
-        depth_delete(edgeimg_close, roiFrame.depth);
+        // depth_delete(edgeimg_close, roiFrame.depth);
         cv::imshow("edgeimg_close", edgeimg_close);  // RGB edge
-
-
 
 
         cv::imshow("hsv_Mopol_pre", hsvimg_binaryMopol); // HSV
@@ -100,27 +96,35 @@ int main(void)
         cv::blur(hsvimg_binaryMopol, hsvimg_binaryblur, cv::Size(3,3));
         cv::Canny(hsvimg_binaryblur, edgeimg, canny_threshold1, canny_threshold2, 5); // hsv 모폴로지 이진 이미지를 캐니 에지로 연산\
 
-
+        //contours를 이용한 긴에지 검출
         vector<vector<cv::Point>> contours;
         vector<vector<cv::Point>> contours_correct;
         vector<cv::Vec4i> hierarchy;
+        vector<cv::RotatedRect> ellipse;
 
         cv::Mat contoursRGB = roiFrame.rgb.clone();
-        // cv::RNG rng(12345); // random number generator
-        cv::findContours(edgeimg, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
-        // cv::Mat drawing = cv::Mat::zeros(roiFrame.rgb.size(), CV_8UC3);
-
+        // cv::findContours(edgeimg, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);  // edge에서 contours 추출
+        cv::findContours(hsvimg_binaryMopol, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE); // hsv mopology image에서 contours 추출
         cv::Mat drawing = cv::Mat::zeros(roiFrame.rgb.size(), CV_8UC3);
 
         cv::Scalar color = cv::Scalar(0, 0, 255);
         for(int i = 0; i<contours.size(); i++){
             if(contours[i].size() >= contour_size)
-                contours_correct.push_back(contours[i]);
-                // cv::drawContours(drawing, contours, i, color, 1, 16, hierarchy, 0, cv::Point());
+                contours_correct.push_back(contours[i]); // edge correcting 
         }
+
+        //contours drawing
         for(int i = 0; i<contours_correct.size(); i++){
-                cv::drawContours(drawing, contours_correct, i, color, 1, 16, hierarchy, 0, cv::Point());
+            cv::drawContours(drawing, contours_correct, i, color, 4, 16, hierarchy, 0, cv::Point());
         }
+
+        for(int i = 0; i<contours_correct.size();i++){
+            if(contours_correct[i].size() >= 5)
+                cv::RotatedRect tmp = cv::fitEllipse(contours_correct[i]);
+
+        }
+
+
         
         // cout<<"contour size : "<< contours[pre_idx].size()<<endl;
         cv::imshow("roiFrame", roiFrame.rgb);
@@ -162,6 +166,8 @@ int main(void)
                     cv::circle(circle_image, center, radius, cv::Scalar(0, 0, 255), 3, 8, 0);
                 }
                 pre_circles = circles;
+                // cv::imshow("circle", circle_image); //원
+                // cv::waitKey(0);
             }
         }else detect_circle_cnt = 0;
 
@@ -191,6 +197,9 @@ int main(void)
         // cv::imshow("hsvedge", hsvedge);
         cv::imshow("edgeimg", edgeimg); // 엣지
         cv::imshow("circle", circle_image); //원
+
+        cv::threshold(roiFrame.depth, roiFrame.depth, 2, 255, cv::THRESH_BINARY_INV| cv::THRESH_OTSU); // 이진화
+        cv::imshow("depth_img", roiFrame.depth);
 
         int check = cv::waitKey(1);
         if (check == 's')
