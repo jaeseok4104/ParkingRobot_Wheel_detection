@@ -39,6 +39,7 @@ int main(void)
     int highV = atoi(pd.getData("highV").c_str());
 
     int contour_size = atoi(pd.getData("contour_size").c_str());
+    double contours_epsilon = atoi(pd.getData("contours_epsilon").c_str());
 
     char detect_circle_cnt = 0;
     vector<cv::Vec3f> pre_circles;
@@ -99,116 +100,133 @@ int main(void)
         //contours를 이용한 긴에지 검출
         vector<vector<cv::Point>> contours;
         vector<vector<cv::Point>> contours_correct;
+        vector<vector<cv::Point>> contours_Approximate;
         vector<cv::Vec4i> hierarchy;
         vector<cv::RotatedRect> ellipse;
 
         cv::Mat contoursRGB = roiFrame.rgb.clone();
-        // cv::findContours(edgeimg, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);  // edge에서 contours 추출
-        cv::findContours(hsvimg_binaryMopol, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE); // hsv mopology image에서 contours 추출
-        cv::Mat drawing = cv::Mat::zeros(roiFrame.rgb.size(), CV_8UC3);
+        cv::findContours(edgeimg, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);  // edge에서 contours 추출
+        // cv::findContours(hsvimg_binaryMopol, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE); // hsv mopology image에서 contours 추출
+        cv::Mat drawing_correct = cv::Mat::zeros(roiFrame.rgb.size(), CV_8UC3);
+        cv::Mat drawing_approximate = cv::Mat::zeros(roiFrame.rgb.size(), CV_8UC3);
 
         cv::Scalar color = cv::Scalar(0, 0, 255);
         for(int i = 0; i<contours.size(); i++){
             if(contours[i].size() >= contour_size)
                 contours_correct.push_back(contours[i]); // edge correcting 
         }
-
+        for(int i = 0; i<contours_correct.size(); i++){
+            vector<cv::Point> tmp;
+            cv::approxPolyDP(contours_correct[i], tmp, contours_epsilon, true);
+            contours_Approximate.push_back(tmp);
+        }
+        
         //contours drawing
         for(int i = 0; i<contours_correct.size(); i++){
-            cv::drawContours(drawing, contours_correct, i, color, 4, 16, hierarchy, 0, cv::Point());
+            cv::drawContours(drawing_correct, contours_correct, i, color, 1, 16, hierarchy, 0, cv::Point());
+        }
+
+        for (int i = 0; i < contours_Approximate.size(); i++){
+            cv::drawContours(drawing_approximate, contours_Approximate, i, color, 1, 16, hierarchy, 0, cv::Point());
         }
 
         for(int i = 0; i<contours_correct.size();i++){
             if(contours_correct[i].size() >= 5)
                 cv::RotatedRect tmp = cv::fitEllipse(contours_correct[i]);
-
         }
 
 
         
         // cout<<"contour size : "<< contours[pre_idx].size()<<endl;
         cv::imshow("roiFrame", roiFrame.rgb);
-        cv::imshow("contours_drawing", drawing);
-        
-        // cv::RotatedRect tmp = cv::fitEllipse(contours);
-        // vector<cv::RotatedRect> ellipse;
-        // ellipse.clear();
-        // for(int i; i<contours.size(); i++){
-        //     if(contours[i].size() >= 5){
-        //         cv::RotatedRect tmp = cv::fitEllipse(cv::Mat(contours[i]));
-        //         if()
-        //     }
-        // }
-
-
-
+        cv::imshow("contours_correct", drawing_correct);
+        cv::imshow("contours_Approximate", drawing_approximate);
+        cv::Mat tmp_countours;
         vector<cv::Vec3f> circles;
+        if (contours_Approximate.size() > 0){
+            cv::cvtColor(drawing_approximate, tmp_countours, cv::COLOR_BGR2GRAY);                                 // roi grayscale img 업데이트 -> roiframe에서 추출
+            cv::threshold(tmp_countours, tmp_countours, threshold, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU); // 이진화
+            cv::Canny(tmp_countours, tmp_countours, canny_threshold1, canny_threshold2, 5);                       // hsv 모폴로지 이진 이미지를 캐니 에지로 연산
+            cv::imshow("contoursEdge_Approximate", tmp_countours);
+        }
 
-        cv::HoughCircles(edgeimg, circles, CV_HOUGH_GRADIENT, dp, minDist, searchcircle, accumulate_value, minRadius, maxRadius);
-        cout<<"cicles.size = "<< circles.size()<< endl;
-        cv::Mat circle_image = roiFrame.rgb.clone();
+            // cv::RotatedRect tmp = cv::fitEllipse(contours);
+            // vector<cv::RotatedRect> ellipse;
+            // ellipse.clear();
+            // for(int i; i<contours.size(); i++){
+            //     if(contours[i].size() >= 5){
+            //         cv::RotatedRect tmp = cv::fitEllipse(cv::Mat(contours[i]));
+            //         if()
+            //     }
+            // }
 
-        // 가중평균필터
-        if(circles.size()>0){
-            if(detect_circle_cnt<detect_threshold){
-                detect_circle_cnt++;
-                pre_circles = circles;
-            }
-            else{
-                circles[0][0] = ((w*circles[0][0])/10) + ((10-w)*pre_circles[0][0]/10);
-                circles[0][1] = ((w*circles[0][1])/10) + ((10-w)*pre_circles[0][1]/10);
-                circles[0][2] = ((w*circles[0][2])/10) + ((10-w)*pre_circles[0][2]/10);
-                for (size_t i = 0;i<circles.size(); i++){
-                    cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-                    int radius = cvRound(circles[i][2]);
 
-                    cv::circle(circle_image, center, 3, cv::Scalar(0, 255, 0), -1, 8, 0);
-                    cv::circle(circle_image, center, radius, cv::Scalar(0, 0, 255), 3, 8, 0);
+            cv::HoughCircles(tmp_countours, circles, CV_HOUGH_GRADIENT, dp, minDist, searchcircle, accumulate_value, minRadius, maxRadius);
+            cout << "cicles.size = " << circles.size() << endl;
+            cv::Mat circle_image = roiFrame.rgb.clone();
+
+            // 가중평균필터
+            if (circles.size() > 0)
+            {
+                if (detect_circle_cnt < detect_threshold)
+                {
+                    detect_circle_cnt++;
+                    pre_circles = circles;
                 }
-                pre_circles = circles;
-                // cv::imshow("circle", circle_image); //원
-                // cv::waitKey(0);
-            }
-        }else detect_circle_cnt = 0;
+                else{
+                    circles[0][0] = ((w * circles[0][0]) / 10) + ((10 - w) * pre_circles[0][0] / 10);
+                    circles[0][1] = ((w * circles[0][1]) / 10) + ((10 - w) * pre_circles[0][1] / 10);
+                    circles[0][2] = ((w * circles[0][2]) / 10) + ((10 - w) * pre_circles[0][2] / 10);
+                    for (size_t i = 0; i < circles.size(); i++){
+                        cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+                        int radius = cvRound(circles[i][2]);
 
+                        cv::circle(circle_image, center, 3, cv::Scalar(0, 255, 0), -1, 8, 0);
+                        cv::circle(circle_image, center, radius, cv::Scalar(0, 0, 255), 3, 8, 0);
+                    }
+                    pre_circles = circles;
+                    // cv::imshow("circle", circle_image); //원
+                    // cv::waitKey(0);
+                }
+            }else detect_circle_cnt = 0;
 
-        // cv::imshow("hsv_Mopol_pre", hsvimg_binaryMopol);
-        // for (int i = 0; i < hsvimg_binaryMopol.rows; i++)
-        // {
-        //     uchar *img_ptr = hsvimg_binaryMopol.ptr<uchar>(i);
-        //     uchar *def_ptr = binaryimg_close.ptr<uchar>(i);
-        //     for (int j = 0; j < hsvimg_binaryMopol.cols; j++)
-        //     {
-        //         if(def_ptr[j] != img_ptr[j])
-        //             img_ptr[j] = 0;
-        //     }
-        // }
+            // cv::imshow("hsv_Mopol_pre", hsvimg_binaryMopol);
+            // for (int i = 0; i < hsvimg_binaryMopol.rows; i++)
+            // {
+            //     uchar *img_ptr = hsvimg_binaryMopol.ptr<uchar>(i);
+            //     uchar *def_ptr = binaryimg_close.ptr<uchar>(i);
+            //     for (int j = 0; j < hsvimg_binaryMopol.cols; j++)
+            //     {
+            //         if(def_ptr[j] != img_ptr[j])
+            //             img_ptr[j] = 0;
+            //     }
+            // }
 
-        // depth_delete(hsvimg_binaryMopol, roiFrame.depth);
-        // cv::blur(hsvimg_binaryMopol, hsvimg_binaryblur, cv::Size(3,3));
-        // cv::Canny(hsvimg_binaryblur, hsvedge, canny_threshold1, canny_threshold2, 5); // hsv 모폴로지 이진 이미지를 캐니 에지로 연산
+            // depth_delete(hsvimg_binaryMopol, roiFrame.depth);
+            // cv::blur(hsvimg_binaryMopol, hsvimg_binaryblur, cv::Size(3,3));
+            // cv::Canny(hsvimg_binaryblur, hsvedge, canny_threshold1, canny_threshold2, 5); // hsv 모폴로지 이진 이미지를 캐니 에지로 연산
 
-        // data check
-        cv::imshow("binaryimg_close", binaryimg_close); // RGB
-        cv::imshow("hsv", hsvimg); // HSV
-        // cv::imshow("hsv_binary", hsvimg_binary);
-        cv::imshow("hsv_Mopol", hsvimg_binaryMopol); // AND 연산
-        cv::imshow("hsv_binaryblur", hsvimg_binaryblur); // 위에 블러
-        // cv::imshow("hsvedge", hsvedge);
-        cv::imshow("edgeimg", edgeimg); // 엣지
-        cv::imshow("circle", circle_image); //원
+            // data check
+            cv::imshow("binaryimg_close", binaryimg_close); // RGB
+            cv::imshow("hsv", hsvimg);                      // HSV
+            // cv::imshow("hsv_binary", hsvimg_binary);
+            cv::imshow("hsv_Mopol", hsvimg_binaryMopol);     // AND 연산
+            cv::imshow("hsv_binaryblur", hsvimg_binaryblur); // 위에 블러
+            // cv::imshow("hsvedge", hsvedge);
+            cv::imshow("edgeimg", edgeimg);     // 엣지
+            cv::imshow("circle", circle_image); //원
 
-        cv::threshold(roiFrame.depth, roiFrame.depth, 2, 255, cv::THRESH_BINARY_INV| cv::THRESH_OTSU); // 이진화
-        cv::imshow("depth_img", roiFrame.depth);
+            cv::threshold(roiFrame.depth, roiFrame.depth, 2, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU); // 이진화
+            cv::imshow("depth_img", roiFrame.depth);
 
-        int check = cv::waitKey(1);
-        if (check == 's')
-        {
+            int check = cv::waitKey(1);
+            if (check == 's')
+            {
         }
         else if (check == 'q')
             break;
         currIndex++;
-    }
+        }
 
     return 0;
 }

@@ -28,4 +28,5 @@ highH=150
 highS=300
 highV=200
 
-contour_size=650
+contour_size=400
+contours_epsilon=3.5;
