@@ -54,9 +54,9 @@ Eigen/Core
 Eigen/Geometry
 -
 
-/home/park/Work/parkingrobo/test/test/depth_img.cpp
+/home/park/Work/project/parkingrobo/test/test/depth_img.cpp
 slamBase.h
-/home/park/Work/parkingrobo/test/test/slamBase.h
+/home/park/Work/project/parkingrobo/test/test/slamBase.h
 algorithm
 -
 

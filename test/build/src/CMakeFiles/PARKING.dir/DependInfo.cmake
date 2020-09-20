@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/park/Work/parkingrobo/test/src/realsense.cpp" "/home/park/Work/parkingrobo/test/build/src/CMakeFiles/PARKING.dir/realsense.cpp.o"
-  "/home/park/Work/parkingrobo/test/src/slamBase.cpp" "/home/park/Work/parkingrobo/test/build/src/CMakeFiles/PARKING.dir/slamBase.cpp.o"
+  "/home/park/Work/project/parkingrobo/test/src/realsense.cpp" "/home/park/Work/project/parkingrobo/test/build/src/CMakeFiles/PARKING.dir/realsense.cpp.o"
+  "/home/park/Work/project/parkingrobo/test/src/slamBase.cpp" "/home/park/Work/project/parkingrobo/test/build/src/CMakeFiles/PARKING.dir/slamBase.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -17,6 +17,7 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
   "PARKING_EXPORTS"
   "QT_CORE_LIB"
   "QT_GUI_LIB"
+  "QT_NO_DEBUG"
   "QT_WIDGETS_LIB"
   "vtkRenderingContext2D_AUTOINIT=1(vtkRenderingContextOpenGL)"
   "vtkRenderingCore_AUTOINIT=3(vtkInteractionStyle,vtkRenderingFreeType,vtkRenderingOpenGL)"

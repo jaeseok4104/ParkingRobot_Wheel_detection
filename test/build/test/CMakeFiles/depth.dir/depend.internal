@@ -4,7 +4,7 @@
 test/CMakeFiles/depth.dir/depth_img.cpp.o
  ../include/realsense.h
  ../include/slamBase.h
- /home/park/Work/parkingrobo/test/test/depth_img.cpp
+ /home/park/Work/project/parkingrobo/test/test/depth_img.cpp
  /opt/ros/melodic/include/librealsense2/h/rs_config.h
  /opt/ros/melodic/include/librealsense2/h/rs_context.h
  /opt/ros/melodic/include/librealsense2/h/rs_device.h
