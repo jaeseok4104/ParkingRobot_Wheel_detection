@@ -29,4 +29,4 @@ highS=300
 highV=200
 
 contour_size=70
-contours_epsilon=1;
+contours_epsilon=3
