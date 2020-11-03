@@ -4,14 +4,18 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${vcpkgRoot}/x64-linux/include",
-                "/usr/include/pcl-1.8/**",
-                "/usr/include/vtk-6.3"
+                "/usr/local/include/pcl-1.11",
+                "/usr/local/include/pcl-1.11",
+                "/usr/local/include/pcl-1.11",
+                "/usr/local/include/vtk-8.2",
+                "/usr/local/include/vtk-9.0",
+                "/usr/local/include/vtk-8.2",
+                "/usr/local/include/vtk-9.0"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/gcc",
-            "cStandard": "gnu11",
-            "cppStandard": "c++17",
+            "compilerPath": "/usr/bin/clang-6.0",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
             "intelliSenseMode": "clang-x64",
             "configurationProvider": "go2sh.cmake-integration"
         }

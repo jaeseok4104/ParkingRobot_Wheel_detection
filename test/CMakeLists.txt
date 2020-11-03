@@ -29,16 +29,12 @@ set( THIRD_PARTY_LIBS
     ${realsense2_LIBRARY}
     ${PCL_LIBRARIES}
     ${Sophus_LIBRARIES}
+    ${VTK_LIBS}
     g2o_core g2o_stuff g2o_types_sba
 )
 
 INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/include)
 add_subdirectory( src )
 add_subdirectory( test )
-
-# MESSAGE(STATUS ${PROJECT_SOURCE_DIR})
-MESSAGE(STATUS ${PCL_INCLUDE_DIRS})
-# MESSAGE(STATUS ${PCL_DEFINITION})
-# MESSAGE(STATUS ${PCL_LIBRARIES})
 
 
