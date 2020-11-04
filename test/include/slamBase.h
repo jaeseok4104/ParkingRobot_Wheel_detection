@@ -43,7 +43,7 @@ typedef pcl::PointCloud<PointT> PointCloud;
 class ParameterReader
 {
 public:
-    ParameterReader(string filename = "/home/park/Work/project/parkingrobo/test/parameters.txt")
+    ParameterReader(string filename = "/home/park/work/project/ParkingRobot_Wheel_detection/test/parameters.txt")
     {
         ifstream fin(filename.c_str());
         if (!fin)

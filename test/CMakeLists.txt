@@ -12,7 +12,7 @@ SET( LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 find_package(realsense2 REQUIRED)
 include_directories(${realsense2_INCLUDE_DIR})
 
-find_package(OpenCV 3.1 REQUIRED)
+find_package(OpenCV 4.5 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIR})
 
 FIND_PACKAGE(PCL REQUIRED COMPONENTS common io visualization filters)
@@ -37,7 +37,6 @@ add_subdirectory( src )
 add_subdirectory( test )
 
 # MESSAGE(STATUS ${PROJECT_SOURCE_DIR})
-MESSAGE(STATUS ${PCL_INCLUDE_DIRS})
 # MESSAGE(STATUS ${PCL_DEFINITION})
 # MESSAGE(STATUS ${PCL_LIBRARIES})
 

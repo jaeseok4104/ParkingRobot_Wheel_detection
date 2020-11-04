@@ -12,8 +12,8 @@ canny_threshold2=200
 #houghCircle
 dp=1
 minDist=100
-accumulate_value=25
-minRadius=50
+accumulate_value=27
+minRadius=45
 maxRadius=100
 searchcircle=400
 

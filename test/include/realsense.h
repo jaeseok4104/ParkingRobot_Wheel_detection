@@ -3,7 +3,7 @@
 
 #include <librealsense2/rs.hpp>
 #include <opencv2/opencv.hpp>
-#include <opencv2/viz.hpp>
+// #include <opencv2/viz.hpp>
 
 class RealSense
 {
@@ -38,7 +38,7 @@ public:
     // Point Cloud Buffer
     rs2::pointcloud pointcloud;
     rs2::points points;
-    cv::viz::Viz3d viewer;
+    // cv::viz::Viz3d viewer;
     cv::Mat vertices_mat;
     cv::Mat texture_mat;
 
@@ -63,7 +63,7 @@ public:
     inline void initializePointCloud();
 
     // Keyboard Callback Function
-    static void keyboardCallback( const cv::viz::KeyboardEvent& event, void* cookie );
+    // static void keyboardCallback( const cv::viz::KeyboardEvent& event, void* cookie );
 
     // Finalize
     void finalize();
@@ -103,10 +103,10 @@ public:
     inline void drawPointCloud();
 
     // Show Data
-    void show();
+    // void show();
 
     // Show Point Cloud
-    inline void showPointCloud();
+    // inline void showPointCloud();
 };
 
 #endif // __REALSENSE__

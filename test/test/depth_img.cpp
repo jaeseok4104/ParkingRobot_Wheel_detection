@@ -1,7 +1,9 @@
 #include "slamBase.h"
-
-
 #include <algorithm>
+#define CV_RETR_TREE 3
+#define CV_CHAIN_APPROX_SIMPLE 2
+#define CV_HOUGH_GRADIENT 3
+
 void depth_delete(cv::Mat &edgeimg, cv::Mat &depth);
 
 int main(void)
@@ -47,7 +49,7 @@ int main(void)
     cv::Mat elements(7,7,CV_8U, cv::Scalar(1));
     while(true)
     {
-        cout<<"Reading files "<<currIndex<<endl;
+        // cout<<"Reading files "<<currIndex<<endl;
         currFrame = readFrame(realsense);
         FRAME roiFrame, roiFrameGray; // roi이미지 및 roi grayscale 이미지
         cv::Mat binaryimg; // 이진화 이미지
@@ -147,7 +149,7 @@ int main(void)
             cv::Canny(tmp_countours, tmp_countours, canny_threshold1, canny_threshold2, 5);                       // hsv 모폴로지 이진 이미지를 캐니 에지로 연산
             cv::imshow("contoursEdge_Approximate", tmp_countours);
             cv::HoughCircles(tmp_countours, circles, CV_HOUGH_GRADIENT, dp, minDist, searchcircle, accumulate_value, minRadius, maxRadius);
-            cout << "cicles.size = " << circles.size() << endl;
+            // cout << "cicles.size = " << circles.size() << endl;
 
             // 가중평균필터
             if (circles.size() > 0)
@@ -170,36 +172,10 @@ int main(void)
                     }
                     pre_circles = circles;
                 }
+
+                cout <<"x:"<<circles[0][0]<<", y:"<<circles[0][1]<<", radius:"<<circles[0][2]<<endl;
             }else detect_circle_cnt = 0;
         }
-
-            // cv::RotatedRect tmp = cv::fitEllipse(contours);
-            // vector<cv::RotatedRect> ellipse;
-            // ellipse.clear();
-            // for(int i; i<contours.size(); i++){
-            //     if(contours[i].size() >= 5){
-            //         cv::RotatedRect tmp = cv::fitEllipse(cv::Mat(contours[i]));
-            //         if()
-            //     }
-            // }
-
-
-
-            // cv::imshow("hsv_Mopol_pre", hsvimg_binaryMopol);
-            // for (int i = 0; i < hsvimg_binaryMopol.rows; i++)
-            // {
-            //     uchar *img_ptr = hsvimg_binaryMopol.ptr<uchar>(i);
-            //     uchar *def_ptr = binaryimg_close.ptr<uchar>(i);
-            //     for (int j = 0; j < hsvimg_binaryMopol.cols; j++)
-            //     {
-            //         if(def_ptr[j] != img_ptr[j])
-            //             img_ptr[j] = 0;
-            //     }
-            // }
-
-            // depth_delete(hsvimg_binaryMopol, roiFrame.depth);
-            // cv::blur(hsvimg_binaryMopol, hsvimg_binaryblur, cv::Size(3,3));
-            // cv::Canny(hsvimg_binaryblur, hsvedge, canny_threshold1, canny_threshold2, 5); // hsv 모폴로지 이진 이미지를 캐니 에지로 연산
 
             // data check
             cv::imshow("binaryimg_close", binaryimg_close); // RGB
@@ -210,9 +186,6 @@ int main(void)
             // cv::imshow("hsvedge", hsvedge);
             cv::imshow("edgeimg", edgeimg);     // 엣지
             cv::imshow("circle", circle_image); //원
-
-            // cv::threshold(roiFrame.depth, roiFrame.depth, 2, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU); // 이진화
-            // cv::imshow("depth_img", roiFrame.depth);
 
             int check = cv::waitKey(1);
             if (check == 's'){}

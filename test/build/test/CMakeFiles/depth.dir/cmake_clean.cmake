@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
-  "../../bin/depth"
-  "../../bin/depth.pdb"
   "CMakeFiles/depth.dir/depth_img.cpp.o"
+  "../../bin/depth.pdb"
+  "../../bin/depth"
 )
 
 # Per-language clean rules from dependency scanning.

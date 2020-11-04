@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
-  "../../lib/libPARKING.pdb"
-  "../../lib/libPARKING.so"
   "CMakeFiles/PARKING.dir/realsense.cpp.o"
   "CMakeFiles/PARKING.dir/slamBase.cpp.o"
+  "../../lib/libPARKING.pdb"
+  "../../lib/libPARKING.so"
 )
 
 # Per-language clean rules from dependency scanning.

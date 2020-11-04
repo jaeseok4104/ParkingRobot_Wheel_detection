@@ -1,8 +1,8 @@
-/home/park/Work/project/parkingrobo/test/build/CMakeFiles/rebuild_cache.dir
-/home/park/Work/project/parkingrobo/test/build/CMakeFiles/edit_cache.dir
-/home/park/Work/project/parkingrobo/test/build/src/CMakeFiles/edit_cache.dir
-/home/park/Work/project/parkingrobo/test/build/src/CMakeFiles/rebuild_cache.dir
-/home/park/Work/project/parkingrobo/test/build/src/CMakeFiles/PARKING.dir
-/home/park/Work/project/parkingrobo/test/build/test/CMakeFiles/rebuild_cache.dir
-/home/park/Work/project/parkingrobo/test/build/test/CMakeFiles/edit_cache.dir
-/home/park/Work/project/parkingrobo/test/build/test/CMakeFiles/depth.dir
+/home/park/work/project/ParkingRobot_Wheel_detection/test/build/CMakeFiles/rebuild_cache.dir
+/home/park/work/project/ParkingRobot_Wheel_detection/test/build/CMakeFiles/edit_cache.dir
+/home/park/work/project/ParkingRobot_Wheel_detection/test/build/src/CMakeFiles/rebuild_cache.dir
+/home/park/work/project/ParkingRobot_Wheel_detection/test/build/src/CMakeFiles/PARKING.dir
+/home/park/work/project/ParkingRobot_Wheel_detection/test/build/src/CMakeFiles/edit_cache.dir
+/home/park/work/project/ParkingRobot_Wheel_detection/test/build/test/CMakeFiles/rebuild_cache.dir
+/home/park/work/project/ParkingRobot_Wheel_detection/test/build/test/CMakeFiles/depth.dir
+/home/park/work/project/ParkingRobot_Wheel_detection/test/build/test/CMakeFiles/edit_cache.dir

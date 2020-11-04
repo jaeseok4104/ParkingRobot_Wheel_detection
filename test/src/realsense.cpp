@@ -21,26 +21,26 @@ RealSense::~RealSense()
 }
 
 // Processing
-void RealSense::run()
-{
-    // Main Loop
-    while( !viewer.wasStopped() ){
-        // Update Data
-        update();
+// void RealSense::run()
+// {
+//     // Main Loop
+//     while( !viewer.wasStopped() ){
+//         // Update Data
+//         update();
 
-        // Draw Data
-        draw();
+//         // Draw Data
+//         draw();
 
-        // Show Data
-        show();
+//         // Show Data
+//         show();
 
-        // Key Check
-        const int32_t key = cv::waitKey( 10 );
-        if( key == 'q' ){
-            break;
-        }
-    }
-}
+//         // Key Check
+//         const int32_t key = cv::waitKey( 10 );
+//         if( key == 'q' ){
+//             break;
+//         }
+//     }
+// }
 
 // Initialize
 void RealSense::initialize()
@@ -66,47 +66,47 @@ inline void RealSense::initializeSensor()
     pipeline_profile = pipeline.start( config );
 }
 
-// Initialize Point Cloud
-inline void RealSense::initializePointCloud()
-{
-    // Create Window
-    viewer = cv::viz::Viz3d( "Point Cloud" );
+// // Initialize Point Cloud
+// inline void RealSense::initializePointCloud()
+// {
+//     // Create Window
+//     viewer = cv::viz::Viz3d( "Point Cloud" );
 
-    // Register Keyboard Callback Function
-    viewer.registerKeyboardCallback( &keyboardCallback, this );
+//     // Register Keyboard Callback Function
+//     viewer.registerKeyboardCallback( &keyboardCallback, this );
 
-    // Show Coordinate System
-    viewer.showWidget( "CoordinateSystem", cv::viz::WCameraPosition( 0.5 ) );
-}
+//     // Show Coordinate System
+//     viewer.showWidget( "CoordinateSystem", cv::viz::WCameraPosition( 0.5 ) );
+// }
 
-// Keyboard Callback Function
-void RealSense::keyboardCallback( const cv::viz::KeyboardEvent& event, void* cookie )
-{
-    // Exit Viewer when Pressed ESC key
-    if( event.code == 'q' && event.action == cv::viz::KeyboardEvent::Action::KEY_DOWN ){
+// // Keyboard Callback Function
+// void RealSense::keyboardCallback( const cv::viz::KeyboardEvent& event, void* cookie )
+// {
+//     // Exit Viewer when Pressed ESC key
+//     if( event.code == 'q' && event.action == cv::viz::KeyboardEvent::Action::KEY_DOWN ){
 
-        // Retrieve Viewer
-        cv::viz::Viz3d viewer = static_cast<RealSense*>( cookie )->viewer;
+//         // Retrieve Viewer
+//         cv::viz::Viz3d viewer = static_cast<RealSense*>( cookie )->viewer;
 
-        // Close Viewer
-        viewer.close();
-    }
-    // Save Point Cloud to File when Pressed 's' key
-    else if( event.code == 's' && event.action == cv::viz::KeyboardEvent::Action::KEY_DOWN ){
-        // Retrieve Point Cloud and Color
-        cv::Mat cloud = static_cast<RealSense*>( cookie )->vertices_mat;
-        cv::Mat color = static_cast<RealSense*>( cookie )->texture_mat;
+//         // Close Viewer
+//         viewer.close();
+//     }
+//     // Save Point Cloud to File when Pressed 's' key
+//     else if( event.code == 's' && event.action == cv::viz::KeyboardEvent::Action::KEY_DOWN ){
+//         // Retrieve Point Cloud and Color
+//         cv::Mat cloud = static_cast<RealSense*>( cookie )->vertices_mat;
+//         cv::Mat color = static_cast<RealSense*>( cookie )->texture_mat;
 
-        // Generate File Name
-        static uint8_t i = 0;
-        std::ostringstream oss;
-        oss << std::setfill( '0' ) << std::setw( 3 ) << i++;
-        std::string file = oss.str() + ".ply";
+//         // Generate File Name
+//         static uint8_t i = 0;
+//         std::ostringstream oss;
+//         oss << std::setfill( '0' ) << std::setw( 3 ) << i++;
+//         std::string file = oss.str() + ".ply";
 
-        // Write Point Cloud to File
-        cv::viz::writeCloud( file, cloud, color, cv::noArray(), false );
-    }
-};
+//         // Write Point Cloud to File
+//         cv::viz::writeCloud( file, cloud, color, cv::noArray(), false );
+//     }
+// };
 
 // Finalize
 void RealSense::finalize()
@@ -265,27 +265,27 @@ inline void RealSense::drawPointCloud()
 }
 
 // Show Data
-void RealSense::show()
-{
-    // Show Point Cloud
-    showPointCloud();
-}
+// void RealSense::show()
+// {
+//     // Show Point Cloud
+//     showPointCloud();
+// }
 
-// Show Point Cloud
-inline void RealSense::showPointCloud()
-{
-    if( vertices_mat.empty() ){
-        return;
-    }
+// // Show Point Cloud
+// inline void RealSense::showPointCloud()
+// {
+//     if( vertices_mat.empty() ){
+//         return;
+//     }
 
-    if( texture_mat.empty() ){
-        return;
-    }
+//     if( texture_mat.empty() ){
+//         return;
+//     }
 
-    // Create Point Cloud
-    cv::viz::WCloud cloud( vertices_mat, texture_mat );
+//     // Create Point Cloud
+//     cv::viz::WCloud cloud( vertices_mat, texture_mat );
 
-    // Show Point Cloud
-    viewer.showWidget( "Cloud", cloud );
-    viewer.spinOnce();
-}
+//     // Show Point Cloud
+//     viewer.showWidget( "Cloud", cloud );
+//     viewer.spinOnce();
+// }
