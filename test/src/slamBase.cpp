@@ -153,7 +153,7 @@ PointCloud::Ptr joinPointCloud( PointCloud::Ptr original, FRAME& newFrame, Eigen
     return tmp;
 }
 
-FRAME readFrame( RealSense& realsense)
+FRAME readFrame(RealSense& realsense)
 {
     FRAME f;
 
@@ -169,12 +169,12 @@ FRAME readFrame( RealSense& realsense)
 
     f.rgb = realsense.color_mat;
     
-    cv::Mat depth = realsense.depth_mat;
+    cv::Mat depth = realsense.align_mat.clone();
     depth.convertTo(f.depth, CV_8UC1, 255.0/65536.0);
 
-    // f.align = realsense.align_mat;
-    cv::Mat align = realsense.align_mat;
-    align.convertTo(f.align, CV_8UC1, 255.0/65536.0);
+    f.align = realsense.align_mat.clone();
+
+    // align.convertTo(f.align, CV_8UC1, 255.0/65536.0);
     return f;
 }
 
@@ -216,4 +216,3 @@ vector<cv::DMatch> matchingWheel(FRAME & frame1, FRAME & frame2)
 
     return goodMatches;
 }
-

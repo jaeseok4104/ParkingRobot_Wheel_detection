@@ -6,13 +6,16 @@
                 "${workspaceFolder}/**",
                 "/usr/include/pcl-1.8",
                 "/usr/local/include/pcl-1.11",
-                "/usr/include/vtk-6.3"
+                "/usr/include/vtk-6.3",
+                "/usr/include/eigen3",
+                "/usr/local/include/opencv4"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang-6.0",
             "cStandard": "c11",
             "cppStandard": "c++14",
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "clang-x64",
+            "configurationProvider": "go2sh.cmake-integration"
         }
     ],
     "version": 4

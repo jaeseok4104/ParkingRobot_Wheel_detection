@@ -20,38 +20,11 @@ RealSense::~RealSense()
     finalize();
 }
 
-// Processing
-// void RealSense::run()
-// {
-//     // Main Loop
-//     while( !viewer.wasStopped() ){
-//         // Update Data
-//         update();
-
-//         // Draw Data
-//         draw();
-
-//         // Show Data
-//         show();
-
-//         // Key Check
-//         const int32_t key = cv::waitKey( 10 );
-//         if( key == 'q' ){
-//             break;
-//         }
-//     }
-// }
-
 // Initialize
 void RealSense::initialize()
 {
-    // cv::setUseOptimized( true );
-
     // Initialize Sensor
     initializeSensor();
-
-    // Initialize Point Cloud
-    // initializePointCloud();
 }
 
 // Initialize Sensor
@@ -65,48 +38,6 @@ inline void RealSense::initializeSensor()
     // Start Pipeline
     pipeline_profile = pipeline.start( config );
 }
-
-// // Initialize Point Cloud
-// inline void RealSense::initializePointCloud()
-// {
-//     // Create Window
-//     viewer = cv::viz::Viz3d( "Point Cloud" );
-
-//     // Register Keyboard Callback Function
-//     viewer.registerKeyboardCallback( &keyboardCallback, this );
-
-//     // Show Coordinate System
-//     viewer.showWidget( "CoordinateSystem", cv::viz::WCameraPosition( 0.5 ) );
-// }
-
-// // Keyboard Callback Function
-// void RealSense::keyboardCallback( const cv::viz::KeyboardEvent& event, void* cookie )
-// {
-//     // Exit Viewer when Pressed ESC key
-//     if( event.code == 'q' && event.action == cv::viz::KeyboardEvent::Action::KEY_DOWN ){
-
-//         // Retrieve Viewer
-//         cv::viz::Viz3d viewer = static_cast<RealSense*>( cookie )->viewer;
-
-//         // Close Viewer
-//         viewer.close();
-//     }
-//     // Save Point Cloud to File when Pressed 's' key
-//     else if( event.code == 's' && event.action == cv::viz::KeyboardEvent::Action::KEY_DOWN ){
-//         // Retrieve Point Cloud and Color
-//         cv::Mat cloud = static_cast<RealSense*>( cookie )->vertices_mat;
-//         cv::Mat color = static_cast<RealSense*>( cookie )->texture_mat;
-
-//         // Generate File Name
-//         static uint8_t i = 0;
-//         std::ostringstream oss;
-//         oss << std::setfill( '0' ) << std::setw( 3 ) << i++;
-//         std::string file = oss.str() + ".ply";
-
-//         // Write Point Cloud to File
-//         cv::viz::writeCloud( file, cloud, color, cv::noArray(), false );
-//     }
-// };
 
 // Finalize
 void RealSense::finalize()
@@ -169,11 +100,6 @@ inline void RealSense::updateAlign()
     // Retrieve Depth Frame
     rs2::align align(RS2_STREAM_COLOR);
     align_set = align.process(frameset);
-    // align_frame = align_set.get_depth_frame();
-
-    // // Retrive Frame Size
-    // align_width = align_frame.as<rs2::video_frame>().get_width();
-    // align_height = align_frame.as<rs2::video_frame>().get_height();
 }
 
 // Update Point Cloud
@@ -204,8 +130,6 @@ void RealSense::draw()
 // Draw Color
 inline void RealSense::drawColor()
 {
-    // Create cv::Mat form Color Frame
-    // color_mat = cv::Mat( color_height, color_width, CV_8UC3, const_cast<void*>( color_frame.get_data() ) );
     align_frame = align_set.get_color_frame();
 
     // // Retrive Frame Size
@@ -263,29 +187,3 @@ inline void RealSense::drawPointCloud()
         }
     }
 }
-
-// Show Data
-// void RealSense::show()
-// {
-//     // Show Point Cloud
-//     showPointCloud();
-// }
-
-// // Show Point Cloud
-// inline void RealSense::showPointCloud()
-// {
-//     if( vertices_mat.empty() ){
-//         return;
-//     }
-
-//     if( texture_mat.empty() ){
-//         return;
-//     }
-
-//     // Create Point Cloud
-//     cv::viz::WCloud cloud( vertices_mat, texture_mat );
-
-//     // Show Point Cloud
-//     viewer.showWidget( "Cloud", cloud );
-//     viewer.spinOnce();
-// }

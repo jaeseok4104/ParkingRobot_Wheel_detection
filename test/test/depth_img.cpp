@@ -6,6 +6,11 @@
 
 void depth_delete(cv::Mat &edgeimg, cv::Mat &depth);
 
+void get_point_cloud(FRAME frame, RealSense realsense)
+{
+
+}
+
 int main(void)
 {
     RealSense realsense;
@@ -61,11 +66,11 @@ int main(void)
         cv::Mat hsvimg_binaryMopol; // hsv 이진 close 이미지
         cv::Mat hsvimg_binaryblur; // hsv_이진 블러 이미지
         cv::Mat hsvedge; // hsv 엣지
-        cv::Mat addEdge;
         cv::Mat addEdgeErode;
+        cv::Mat addEdge;
         
         roiFrame.rgb = currFrame.rgb(cv::Rect(start_x,start_y,end_x,end_y));      // roi 이미지 업데이트 -> currframe에서 추출
-        roiFrame.depth = currFrame.align(cv::Rect(start_x,start_y,end_x,end_y));  // roidepth 이미지 업데이트 -> currframe에서 추출
+        roiFrame.depth = currFrame.depth(cv::Rect(start_x,start_y,end_x,end_y));  // roidepth 이미지 업데이트 -> currframe에서 추출
         cv::cvtColor(roiFrame.rgb, roiFrameGray.rgb,cv::COLOR_BGR2GRAY);          // roi grayscale img 업데이트 -> roiframe에서 추출
         cv::cvtColor(roiFrame.rgb, hsvimg, cv::COLOR_BGR2HSV);                    // roi hsv img 업데이트 -> roiframe에서 추출
         
@@ -80,10 +85,10 @@ int main(void)
         cv::blur(binaryimg_close, edgeimg_close, cv::Size(3,3));  // 닫힘연산한 일반이미지 블러링
         cv::Canny(edgeimg_close, edgeimg_close, canny_threshold1, canny_threshold2, 5);  //  일반 이미지 닫힘연산 캐니엣지
         // depth_delete(edgeimg_close, roiFrame.depth);
-        cv::imshow("edgeimg_close", edgeimg_close);  // RGB edge
+        // cv::imshow("edgeimg_close", edgeimg_close);  // RGB edge
 
 
-        cv::imshow("hsv_Mopol_pre", hsvimg_binaryMopol); // HSV
+        // cv::imshow("hsv_Mopol_pre", hsvimg_binaryMopol); // HSV
         for (int i = 0; i < hsvimg_binaryMopol.rows; i++)
         {
             uchar *img_ptr = hsvimg_binaryMopol.ptr<uchar>(i);
@@ -137,9 +142,9 @@ int main(void)
                 cv::RotatedRect tmp = cv::fitEllipse(contours_correct[i]);
         }
         
-        cv::imshow("roiFrame", roiFrame.rgb);
+        // cv::imshow("roiFrame", roiFrame.rgb);
         cv::imshow("contours_correct", drawing_correct);
-        cv::imshow("contours_Approximate", drawing_approximate);
+        // cv::imshow("contours_Approximate", drawing_approximate);
         cv::Mat tmp_countours;
         cv::Mat circle_image = roiFrame.rgb.clone();
         vector<cv::Vec3f> circles;
@@ -169,23 +174,52 @@ int main(void)
 
                         cv::circle(circle_image, center, 3, cv::Scalar(0, 255, 0), -1, 8, 0);
                         cv::circle(circle_image, center, radius, cv::Scalar(0, 0, 255), 3, 8, 0);
+                        
+                        cv::Point left_vertex(cvRound(circles[i][0])-cvRound(circles[i][2])+7,cvRound(circles[i][1]));
+                        cv::Point right_vertex(cvRound(circles[i][0])+cvRound(circles[i][2])-7,cvRound(circles[i][1]));
+                        cv::circle(circle_image, left_vertex, 3, cv::Scalar(0, 255, 0), -1, 8, 0);
+                        cv::circle(circle_image, right_vertex, 3, cv::Scalar(255, 0, 0), -1, 8, 0);
+                        
+                        ///object length calculator
+                        ushort ld = currFrame.align.ptr<ushort>(left_vertex.y)[left_vertex.x+170];
+                        double lz = (double)ld/ 1000;
+                        double lx = ((double)left_vertex.x + 170 - 318.653) * lz / 384.291; 
+                        double ly = ((double)left_vertex.y - 249.416) * lz / 383.923;
+                        // cout << "lx: " << lx << " ly: " << ly <<" lz: " << lz <<endl;
+
+                        ushort rd = currFrame.align.ptr<ushort>(right_vertex.y)[right_vertex.x+170];
+                        double rz = (double)rd / 1000;
+                        double rx = ((double)right_vertex.x + 170 - 318.653) * rz / 384.291; 
+                        double ry = ((double)right_vertex.y - 249.416) * rz / 383.923;
+                        // cout << "rx: " << rx << " ry: " << ry <<" rz: " << rz <<endl;
+                        cout << "x:" << circles[0][0] << ", y:" << circles[0][1] << ", radius:" << circles[0][2] << " real : ";
+                        cout << sqrt(pow((rx-lx),2)+pow((ry-ly),2)+pow((rz-lz),2))*1000<<endl;
                     }
                     pre_circles = circles;
                 }
 
-                cout <<"x:"<<circles[0][0]<<", y:"<<circles[0][1]<<", radius:"<<circles[0][2]<<endl;
             }else detect_circle_cnt = 0;
         }
 
-            // data check
-            cv::imshow("binaryimg_close", binaryimg_close); // RGB
-            cv::imshow("hsv", hsvimg);                      // HSV
-            // cv::imshow("hsv_binary", hsvimg_binary);
-            cv::imshow("hsv_Mopol", hsvimg_binaryMopol);     // AND 연산
-            cv::imshow("hsv_binaryblur", hsvimg_binaryblur); // 위에 블러
+            // // data check
+            // cv::imshow("binaryimg_close", binaryimg_close); // RGB
+            // cv::imshow("hsv", hsvimg);                      // HSV
+            // // cv::imshow("hsv_binary", hsvimg_binary);
+            // cv::imshow("hsv_Mopol", hsvimg_binaryMopol);     // AND 연산
+            // cv::imshow("hsv_binaryblur", hsvimg_binaryblur); // 위에 블러
             // cv::imshow("hsvedge", hsvedge);
-            cv::imshow("edgeimg", edgeimg);     // 엣지
+            // cv::imshow("tmp_countours", tmp_countours);     // 엣지
             cv::imshow("circle", circle_image); //원
+
+            // cv::imshow("currFrame.align", currFrame.align);
+            // cv::imshow("currFrame.depth", currFrame.depth);
+            // cv::imshow("currFrame.rgb", currFrame.rgb);
+            
+            // // cv::imshow("roiFrame.align", roiFrame.align);
+            // cv::imshow("roiFrame.depth", roiFrame.depth);
+            cv::imshow("roiFrame.rgb", roiFrame.rgb);
+            
+            // cout << currFrame.align.cols <<" "<< currFrame.align.rows<<endl;
 
             int check = cv::waitKey(1);
             if (check == 's'){}
@@ -206,9 +240,8 @@ void depth_delete(cv::Mat &edgeimg, cv::Mat &depth)
         for (int j = 0; j < edgeimg.cols; j++)
         {
             // if (((depth_ptr[j + 5] > 3) && (depth_ptr[j - 5] > 3) && ((depth_ptr - 5)[j] > 3) && ((depth_ptr + 5)[j] > 3)))
-            if ((depth_ptr[j] > 2)|| depth_ptr[j] ==0)
+            if ((depth_ptr[j] > 5)|| depth_ptr[j] ==0)
                 img_ptr[j] = 0;
         }
     }
 }
-
