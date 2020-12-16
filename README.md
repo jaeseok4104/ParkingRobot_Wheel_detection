@@ -4,7 +4,7 @@ This project uses a depth camera to find the vehicle's wheels in a parking lot.
 
 ###  Experiment
 [![Indoor](https://img.youtube.com/vi/04kTc1E15Rc/maxresdefault.jpg)](https://youtu.be/04kTc1E15Rc)
-![Indoor](https://img.youtube.com/vi/Ew26ki-mbVg/maxresdefault.jpg)](https://youtu.be/Ew26ki-mbVg)
+[![Indoor](https://img.youtube.com/vi/Ew26ki-mbVg/maxresdefault.jpg)](https://youtu.be/Ew26ki-mbVg)
 
 
 ### Algorithm Block Diagram 
